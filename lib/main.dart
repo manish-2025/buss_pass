@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:telegram_web_app/telegram_web_app.dart';
 
 void main() {
   runApp(const MyApp());
@@ -55,6 +56,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  final tg = TelegramWebApp.instance;
 
   void _incrementCounter() {
     setState(() {
@@ -104,6 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Text("Hello ${tg.initDataUnsafe?.user?.first_name ?? "Guest"}"),
             const Text('You have pushed the button this many times:'),
             Text(
               '$_counter',
