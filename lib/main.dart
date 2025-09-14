@@ -22,8 +22,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-      // home: const PaytmHomePage(),
+      // home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const PaytmHomePage(),
     );
   }
 }
@@ -49,8 +49,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    print("object route => ${tg.initDataUnsafe?.user?.first_name}");
-    print("object route => ${tg.initDataUnsafe?.user?.photo_url}");
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,

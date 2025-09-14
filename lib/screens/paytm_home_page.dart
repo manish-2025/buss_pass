@@ -1,5 +1,7 @@
+import 'package:buss_pass/core/assets_images.dart';
 import 'package:buss_pass/screens/paytm_services_page.dart';
 import 'package:flutter/material.dart';
+import 'package:telegram_web_app/telegram_web_app.dart';
 
 class PaytmHomePage extends StatefulWidget {
   const PaytmHomePage({super.key});
@@ -9,7 +11,39 @@ class PaytmHomePage extends StatefulWidget {
 }
 
 class PaytmHomePageState extends State<PaytmHomePage> {
-  int _selectedIndex = 0;
+  final tg = TelegramWebApp.instance;
+
+  final PageController _pageController = PageController();
+  final List<String> _banners = [
+    AssetsImages().banner1,
+    AssetsImages().banner2,
+    AssetsImages().banner3,
+    AssetsImages().banner4,
+    AssetsImages().banner5,
+  ];
+
+  int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    // Auto-slide banners
+    Future.delayed(Duration.zero, _autoSlide);
+  }
+
+  void _autoSlide() {
+    Future.delayed(Duration(seconds: 3), () {
+      if (_pageController.hasClients) {
+        _currentIndex = (_currentIndex + 1) % _banners.length;
+        _pageController.animateToPage(
+          _currentIndex,
+          duration: Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
+        _autoSlide(); // Repeat
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +56,7 @@ class PaytmHomePageState extends State<PaytmHomePage> {
           padding: EdgeInsets.all(8.0),
           child: CircleAvatar(
             backgroundColor: Colors.white,
-            child: Icon(Icons.person, color: Colors.blue[700]),
+            child: Text("${tg.initDataUnsafe?.user?.first_name}"),
           ),
         ),
         title: Column(
@@ -61,139 +95,31 @@ class PaytmHomePageState extends State<PaytmHomePage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Balance Card
-            Container(
-              margin: EdgeInsets.all(16),
-              padding: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.blue[600]!, Colors.blue[800]!],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+            SizedBox(height: 20),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Container(
+                height: 150,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 8,
-                    offset: Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Paytm Wallet',
-                        style: TextStyle(color: Colors.white70, fontSize: 14),
-                      ),
-                      Text(
-                        '₹1,250',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      'Add Money',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
+                clipBehavior: Clip.antiAlias,
+                child: PageView.builder(
+                  controller: _pageController,
+                  itemCount: _banners.length,
+                  onPageChanged: (index) {
+                    setState(() {
+                      _currentIndex = index;
+                    });
+                  },
+                  itemBuilder: (context, index) {
+                    // return Image.network(_banners[index], fit: BoxFit.cover);
+                    return Image.asset(_banners[index], fit: BoxFit.fill);
+                  },
+                ),
               ),
             ),
-
-            // Quick Actions Grid
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 16),
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 4,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Quick Actions',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey[800],
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  Wrap(
-                    // mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildQuickActionItem(
-                        Icons.phone_android,
-                        'Mobile\nRecharge',
-                        Colors.orange[600]!,
-                      ),
-                      _buildQuickActionItem(
-                        Icons.flash_on,
-                        'Electricity\nBill',
-                        Colors.yellow[700]!,
-                      ),
-                      _buildQuickActionItem(
-                        Icons.local_gas_station,
-                        'Gas Bill',
-                        Colors.red[600]!,
-                      ),
-                      _buildQuickActionItem(
-                        Icons.water_drop,
-                        'Water Bill',
-                        Colors.blue[600]!,
-                      ),
-                      _buildQuickActionItem(
-                        Icons.wifi,
-                        'Broadband\n& DTH',
-                        Colors.purple[600]!,
-                      ),
-                      _buildQuickActionItem(
-                        Icons.school,
-                        'Education\nFees',
-                        Colors.green[600]!,
-                      ),
-                      _buildQuickActionItem(
-                        Icons.local_hospital,
-                        'Hospital &\nDiagnostics',
-                        Colors.teal[600]!,
-                      ),
-                      _buildQuickActionItem(
-                        Icons.more_horiz,
-                        'View All\nBills',
-                        Colors.white,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
             SizedBox(height: 20),
 
             // Money Transfer Section
@@ -217,9 +143,9 @@ class PaytmHomePageState extends State<PaytmHomePage> {
                   Text(
                     'Money Transfer',
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 19,
                       fontWeight: FontWeight.bold,
-                      color: Colors.grey[800],
+                      color: Colors.black,
                     ),
                   ),
                   SizedBox(height: 16),
@@ -227,24 +153,55 @@ class PaytmHomePageState extends State<PaytmHomePage> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       _buildTransferOption(
-                        Icons.person,
-                        'To Mobile\nNumber',
-                        Colors.blue[600]!,
+                        icon: Icons.qr_code,
+                        title: 'Scan & Pay',
+                        color: Colors.white,
                       ),
                       _buildTransferOption(
-                        Icons.account_balance,
-                        'To Bank/\nUPI ID',
-                        Colors.green[600]!,
+                        icon: Icons.person,
+                        title: 'To Mobile',
+                        color: Colors.white,
                       ),
                       _buildTransferOption(
-                        Icons.account_balance_wallet,
-                        'To Self\nAccount',
-                        Colors.purple[600]!,
+                        icon: Icons.account_balance,
+                        title: 'To Bank A/c',
+                        color: Colors.white,
                       ),
                       _buildTransferOption(
-                        Icons.qr_code,
-                        'Scan QR\nCode',
-                        Colors.orange[600]!,
+                        icon: Icons.person,
+                        title: 'To Self A/c',
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildTransferOption(
+                        icon: Icons.account_balance_wallet,
+                        title: 'Balance &\nHistory',
+                        color: const Color.fromARGB(255, 2, 30, 188),
+                        bgColor: const Color.fromARGB(255, 206, 232, 249),
+                      ),
+                      _buildTransferOption(
+                        icon: Icons.qr_code,
+                        title: 'Receive\nMoney',
+                        color: const Color.fromARGB(255, 2, 30, 188),
+                        bgColor: const Color.fromARGB(255, 206, 232, 249),
+                      ),
+                      _buildTransferOption(
+                        icon: Icons.add,
+                        title: 'Add Scan\nShortcut',
+                        color: const Color.fromARGB(255, 2, 30, 188),
+                        bgColor: const Color.fromARGB(255, 206, 232, 249),
+                      ),
+                      _buildTransferOption(
+                        icon: Icons.apps,
+                        title: 'All UPI\nServices',
+                        color: const Color.fromARGB(255, 2, 30, 188),
+                        bgColor: const Color.fromARGB(255, 206, 232, 249),
                       ),
                     ],
                   ),
@@ -308,133 +265,19 @@ class PaytmHomePageState extends State<PaytmHomePage> {
 
             SizedBox(height: 20),
 
-            // Recent Transactions
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 16),
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 4,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Recent Transactions',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey[800],
-                        ),
-                      ),
-                      Text(
-                        'View All',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.blue[600],
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 16),
-                  _buildTransactionItem(
-                    'Mobile Recharge',
-                    'Airtel - 9876543210',
-                    '₹299',
-                    Icons.phone_android,
-                    Colors.green[600]!,
-                  ),
-                  _buildTransactionItem(
-                    'Electricity Bill',
-                    'MSEB Maharashtra',
-                    '₹1,450',
-                    Icons.flash_on,
-                    Colors.orange[600]!,
-                  ),
-                  _buildTransactionItem(
-                    'Money Transfer',
-                    'To John Doe',
-                    '₹500',
-                    Icons.person,
-                    Colors.blue[600]!,
-                  ),
-                ],
-              ),
-            ),
-
             SizedBox(height: 100), // Bottom padding for navigation
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) => setState(() => _selectedIndex = index),
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.blue[600],
-        unselectedItemColor: Colors.grey[600],
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.payment), label: 'Pay'),
-          BottomNavigationBarItem(icon: Icon(Icons.history), label: 'History'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.local_offer),
-            label: 'Offers',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
-      ),
     );
   }
 
-  Widget _buildQuickActionItem(IconData icon, String title, Color color) {
-    return GestureDetector(
-      onTap: () {
-        // Handle tap
-      },
-      child: Container(
-        margin: EdgeInsets.only(right: 10, bottom: 5),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 45,
-              height: 45,
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 0, 10, 103),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: Colors.white, size: 26),
-            ),
-            SizedBox(height: 2),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey[700],
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTransferOption(IconData icon, String title, Color color) {
+  Widget _buildTransferOption({
+    required IconData icon,
+    required String title,
+    Color? color,
+    Color? bgColor,
+  }) {
     return GestureDetector(
       onTap: () {
         // Handle tap
@@ -442,13 +285,13 @@ class PaytmHomePageState extends State<PaytmHomePage> {
       child: Column(
         children: [
           Container(
-            width: 56,
-            height: 56,
+            width: 50,
+            height: 50,
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
+              color: bgColor ?? const Color.fromARGB(255, 2, 30, 188),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(icon, color: color, size: 28),
+            child: Icon(icon, color: color ?? Colors.white, size: 24),
           ),
           SizedBox(height: 8),
           Text(
@@ -460,59 +303,6 @@ class PaytmHomePageState extends State<PaytmHomePage> {
               color: Colors.grey[700],
             ),
             maxLines: 2,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTransactionItem(
-    String title,
-    String subtitle,
-    String amount,
-    IconData icon,
-    Color color,
-  ) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 12),
-      child: Row(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, color: color, size: 24),
-          ),
-          SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey[800],
-                  ),
-                ),
-                Text(
-                  subtitle,
-                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                ),
-              ],
-            ),
-          ),
-          Text(
-            amount,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[800],
-            ),
           ),
         ],
       ),
