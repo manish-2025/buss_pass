@@ -246,7 +246,7 @@ class PaytmServicesPage extends StatelessWidget {
             child: Icon(icon, size: 30, color: iconColor),
           ),
           SizedBox(height: 8),
-          Container(
+          SizedBox(
             width: 80,
             child: Text(
               title,
@@ -283,7 +283,7 @@ class PaytmServicesPage extends StatelessWidget {
             child: Icon(icon, size: 24, color: Colors.grey[600]),
           ),
           SizedBox(height: 8),
-          Container(
+          SizedBox(
             width: 100,
             child: Text(
               title,
