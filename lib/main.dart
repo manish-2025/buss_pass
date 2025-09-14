@@ -1,7 +1,12 @@
+import 'package:buss_pass/screens/paytm_home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:telegram_web_app/telegram_web_app.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  final tg = TelegramWebApp.instance;
+  print("object route => ${tg.initDataUnsafe?.user?.first_name}");
+  print("object route => ${tg.initDataUnsafe?.user?.photo_url}");
   runApp(const MyApp());
 }
 
@@ -13,10 +18,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      // home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const PaytmHomePage(),
     );
   }
 }
@@ -45,7 +52,6 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-
         title: Text(widget.title),
       ),
       body: Center(
@@ -65,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: _incrementCounter,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }
