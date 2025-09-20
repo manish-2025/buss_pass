@@ -1,4 +1,5 @@
 import 'package:buss_pass/core/assets_images.dart';
+import 'package:buss_pass/screens/checkout_screen.dart';
 import 'package:buss_pass/screens/paytm_services_page.dart';
 import 'package:flutter/material.dart';
 import 'package:telegram_web_app/telegram_web_app.dart';
@@ -268,6 +269,16 @@ class PaytmHomePageState extends State<PaytmHomePage> {
             SizedBox(height: 100), // Bottom padding for navigation
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton.small(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CheckoutScreen()),
+          );
+        },
+        // child: Icon(Icons.currency_bitcoin, color: Colors.amber),
+        child: Text("Pay"),
       ),
     );
   }
